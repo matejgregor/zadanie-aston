@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = ConsistentDateParametersValidator.class)
 public @interface ConsistentDateParameters {
-    String message() default "Enddate wrong";
+    String message() default "Enddate not present or is before startDate.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     int typeIndex();
