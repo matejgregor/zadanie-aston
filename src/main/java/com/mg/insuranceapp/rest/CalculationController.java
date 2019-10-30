@@ -7,6 +7,7 @@ import com.mg.insuranceapp.enums.InsuranceTarif;
 import com.mg.insuranceapp.enums.InsuranceType;
 import com.mg.insuranceapp.repos.AdditionalFeeRepository;
 import com.mg.insuranceapp.repos.TarifPriceRepository;
+import com.mg.insuranceapp.validations.ConsistentDateParameters;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,7 @@ public class CalculationController {
     }
 
     @RequestMapping(method = GET)
+    @ConsistentDateParameters(typeIndex = 0, startDayIndex = 1, endDayIndex = 2)
     public Double getCalculation(
             @RequestParam("insuranceType") final InsuranceType type,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate startDate,
@@ -51,14 +53,6 @@ public class CalculationController {
             @RequestParam("insuranceTarif") final InsuranceTarif tarif,
             @RequestParam(value = "insuranceAdditional", required = false) final Set<InsuranceAdditional> additionals,
             @RequestParam("peopleAmount") @Min(1) @Max(3) final Integer people) {
-        if ( type == SHORT_TERM ) {
-            if ( endDate == null )
-                throw new IllegalArgumentException("In case of short term insurance end date should be nonempty!");
-            else if ( endDate.isBefore(startDate) )
-                throw new IllegalArgumentException("startDate should be before endDate");
-        }
-
-
         long days = 365;
         if ( type == SHORT_TERM ) {
             days = DAYS.between(startDate, endDate) + 1;
